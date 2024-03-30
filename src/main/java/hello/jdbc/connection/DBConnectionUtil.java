@@ -15,6 +15,7 @@ public class DBConnectionUtil {
     public static Connection getConnection(){
 
         try {
+            //DriverManager가 DB에 맞는 Driver을 찾음 -> Dirver가 커넥션 획득
             Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             log.info("get connection={}, class={}", connection, connection.getClass());
             return connection;
