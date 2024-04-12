@@ -6,7 +6,6 @@ import java.sql.Connection;
 
 import static org.assertj.core.api.Assertions.*;
 
-
 @Slf4j
 class DBConnectionUtilTest {
 
