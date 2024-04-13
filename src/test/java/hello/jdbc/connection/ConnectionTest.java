@@ -29,11 +29,14 @@ public class ConnectionTest {
     @Test
     void dataSourceDriverManager() throws SQLException{
         DriverManagerDataSource dataSource = new DriverManagerDataSource(URL, USERNAME, PASSWORD);
-        useDataSource(dataSource);
+        Connection con1 = dataSource.getConnection();
+        Connection con2 = dataSource.getConnection();
+        log.info("connection={}, class={}", con1, con1.getClass());
+        log.info("connection={}, class={}", con2, con2.getClass());
     }
 
 
-
+    //3. HikariDataSource(커넥션풀) 사용
     @Test
     void dataSourceConnectionPool() throws SQLException, InterruptedException {
         //커넥션 풀링 :HikariProxyConnection(Proxy) -> JdbcConnection(Target)
@@ -43,19 +46,23 @@ public class ConnectionTest {
         dataSource.setPassword(PASSWORD);
         dataSource.setMaximumPoolSize(10);
         dataSource.setPoolName("MyPool");
-
-        useDataSource(dataSource);
+        //useDataSource(dataSource);
         Thread.sleep(1000);
-    }
 
-
-
-    private void useDataSource(DataSource dataSource) throws SQLException {
         Connection con1 = dataSource.getConnection();
         Connection con2 = dataSource.getConnection();
         log.info("connection={}, class={}", con1, con1.getClass());
         log.info("connection={}, class={}", con2, con2.getClass());
     }
+
+
+
+/*    private void useDataSource(DataSource dataSource) throws SQLException {
+        Connection con1 = dataSource.getConnection();
+        Connection con2 = dataSource.getConnection();
+        log.info("connection={}, class={}", con1, con1.getClass());
+        log.info("connection={}, class={}", con2, con2.getClass());
+    }*/
 
 
 
