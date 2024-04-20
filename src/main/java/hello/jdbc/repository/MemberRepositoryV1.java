@@ -1,20 +1,29 @@
 package hello.jdbc.repository;
 
 
-import hello.jdbc.connection.DBConnectionUtil;
+
 import hello.jdbc.domain.Member;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.support.JdbcUtils;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.NoSuchElementException;
 
-import static hello.jdbc.connection.ConnectionConst.*;
-
 /**
- * JDBC - DriverManager 사용
+ * JDBC - DataSource 사용, JdbcUtils 사용
  */
 @Slf4j
-public class MemberRepositoryV0 {
+public class MemberRepositoryV1 {
+
+    private final DataSource dataSource;
+    
+    //dataSource 주입받음
+    public MemberRepositoryV1(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+
 
     //회원 저장
     public Member save(Member member) throws SQLException {
@@ -126,35 +135,16 @@ public class MemberRepositoryV0 {
     }
 
     private void close(Connection con, Statement stmt, ResultSet rs){
-        if(rs != null){
-            try {
-                rs.close();
-            }catch(SQLException e){
-                log.info("error",e);
-            }
-        }
-
-        if(stmt != null){
-            try {
-                stmt.close();
-            }catch(SQLException e){
-                log.info("error",e);
-            }
-        }
-
-        if(con != null){
-            try {
-                con.close();
-            }catch(SQLException e){
-                log.info("error",e);
-            }
-        }
+        JdbcUtils.closeResultSet(rs);
+        JdbcUtils.closeStatement(stmt);
+        JdbcUtils.closeConnection(con);
     }
 
-    private static Connection getConnection() throws SQLException {
+    private Connection getConnection() throws SQLException {
 
-        //DriverManager 라는 구체화에 의존하는 코드
-        Connection con = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        //dataSource 라는 추상화에 의존하는 코드
+        Connection con = dataSource.getConnection();
+        log.info("get connection={}, class={}", con, con.getClass());
         return con;
         //return DBConnectionUtil.getConnection();
     }
